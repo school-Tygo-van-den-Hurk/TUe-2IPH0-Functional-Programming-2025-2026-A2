@@ -24,6 +24,7 @@ module PegSolitaire
     makeMoves,
     foldT,
     unfoldT,
+    Tree(..),
     makeGameTree,
     hasSolution,
     allSolutions,
@@ -37,7 +38,7 @@ data Peg = Empty | Peg deriving (Eq, Ord)
 
 type Pegs = [Peg]
 
-data Tree a = Leaf a | Node a [Tree a] deriving (Show)
+data Tree a = Leaf a | Node a [Tree a] deriving (Show, Eq, Ord)
 
 instance Show Peg where
   show Empty = "."
