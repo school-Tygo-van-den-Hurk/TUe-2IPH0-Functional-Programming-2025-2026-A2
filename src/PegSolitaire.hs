@@ -33,6 +33,7 @@ module PegSolitaire
   )
 where
 import Data.List (unfoldr)
+import Data.Maybe
 
 data Peg = Empty | Peg deriving (Eq, Ord)
 

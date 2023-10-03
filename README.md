@@ -101,7 +101,7 @@ former is easier.
 #### Exercise 5: `makeMoves` via `unfoldr`
 Define function `makeMoves`, which, given a Zipper for the current game state, generates a (normal) list of all game states that can be reached by making one valid move. The returned gamestates should be zippers.
 
-Hint: You should use the function `unfoldr` twice. Once for the left side (history) of the zipper, and once for the right side (the remainder). 
+Hint: You should use the function `unfoldr` twice. Once for the left side (history) of the zipper, and once for the right side (the remainder). The function [`catMaybes`](https://hackage.haskell.org/package/base-4.18.1.0/docs/Data-Maybe.html#v:catMaybes) (from Data.Maybe) might come in handy.
 
 #### Exercise 6: `unfoldT`
 Define function `unfoldT`, which is the anamorphism factory for type `Tree`, to help create a `Tree` from a seed. Compare this to `unfoldr` (from `Data.List`) and `unfoldTree` (from `Data.Tree`).
