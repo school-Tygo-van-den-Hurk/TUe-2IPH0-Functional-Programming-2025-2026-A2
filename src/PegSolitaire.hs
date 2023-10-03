@@ -18,8 +18,8 @@ module PegSolitaire
     -- Zipper(..),
     fromZipper,
     toZipper,
-    goRight,
-    goLeft,
+    tryRight,
+    tryLeft,
     ----
     makeMoves,
     foldT,
@@ -63,8 +63,8 @@ generateLinearStates = error "Implement, document, and test this function"
 
 fromZipper = error "Implement, document, and test this function"
 toZipper = error "Implement, document, and test this function"
-goRight = error "Implement, document, and test this function"
-goLeft = error "Implement, document, and test this function"
+tryRight = error "Implement, document, and test this function"
+tryLeft = error "Implement, document, and test this function"
 makeMoves = error "Implement, document, and test this function"
 foldT = error "Implement, document, and test this function"
 unfoldT = error "Implement, document, and test this function"

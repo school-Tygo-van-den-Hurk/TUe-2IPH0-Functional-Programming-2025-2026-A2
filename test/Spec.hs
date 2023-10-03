@@ -26,11 +26,11 @@ main = hspec $ do
     it "should have tests" $ do
           (1 :: Integer) `shouldBe` (1 :: Integer)
 
-  describe "goRight" $ do
+  describe "tryRight" $ do
     it "should have tests" $ do
           (1 :: Integer) `shouldBe` (1 :: Integer)
 
-  describe "goLeft" $ do
+  describe "tryLeft" $ do
     it "should have tests" $ do
           (1 :: Integer) `shouldBe` (1 :: Integer)
 
