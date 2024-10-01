@@ -86,22 +86,21 @@ reversed part left of the focus. I.e., you could turn the example into the
 string `[1,2](3)[4,5]`.
 
 
-#### Exercise 4: `generateStates` and `generateLinearStates` via `unfoldr`
-Given a length `n`, define functions `generateStates` and `generateLinearStates` that generate states of size `n`. Function `generateStates` gives back a list of all possible states of size `n`. Function `generateLinearStates` gives back all possible states with `n-1` positions filled with pegs and one empty position.
+#### Exercise 4: `generateLinearStates` and `generateStates` via `unfoldr`
+Given integer `n`, define the following functions using [`unfoldr`](https://hackage.haskell.org/package/base-4.17.2.1/docs/Data-List.html#v:unfoldr) (from `Data.List`).
 
-Define these functions as appropriate instances of `unfoldr` (from `Data.List`).
+**`generateLinearStates`**: This function should give all possible states with `n-1` positions filled with pegs and one empty position. E.g. `generateLinearStates 2` should give the elements `X .` and `. X`.
 
-*Note:* You can use these functions in the remainder of the Assignment to have a broad test set.
-
-*Hint:* First define `generateLinearStates`, then `generateStates` because the
-former is easier. 
+**`generateStates`**: This function gives a list of all possible states up to size `n`. E.g. `generateLinearStates 2` should give the elements `.`, `X`, `. .`, `X .`, `. X` and `X X`.
 
 *Hint:* To define `generateStates` you might want to use some sort of tupling.
+
+*Note:* You can use these functions in the remainder of the Assignment to have a broad test set.
 
 #### Exercise 5: `makeMoves` via `unfoldr`
 Define function `makeMoves`, which, given a Zipper for the current game state, generates a (normal) list of all game states that can be reached by making one valid move. The returned gamestates should be zippers.
 
-Hint: You should use the function `unfoldr` twice. Once for the left side (history) of the zipper, and once for the right side (the remainder). The function [`catMaybes`](https://hackage.haskell.org/package/base-4.18.1.0/docs/Data-Maybe.html#v:catMaybes) (from Data.Maybe) might come in handy.
+Hint: You should use the function `unfoldr` twice. Once for the left side (history) of the zipper, and once for the right side (the remainder). The function [`catMaybes`](https://hackage.haskell.org/package/base-4.17.2.1/docs/Data-Maybe.html#v:catMaybes) (from Data.Maybe) might come in handy.
 
 #### Exercise 6: `unfoldT`
 Define function `unfoldT`, which is the anamorphism factory for type `Tree`, to help create a `Tree` from a seed. Compare this to `unfoldr` (from `Data.List`) and `unfoldTree` (from `Data.Tree`).
@@ -118,5 +117,6 @@ Define function `allSolutions` that gives all possible winning end states as a h
 #### [Bonus] Exercise 10: `getSolution`, `trySolution`
 Define function `getSolution` that gives back a sequence of moves that a player can take to get a solution if a starting game state has a solution. Also define function `trySolution`, that given the outcome of `getSolution` can try the moves and gives the game state after taking a sequence of moves.
 
-Note: We do not specify how this sequence of moves should look like. Find a suitable data type yourself that fits here.
-Important: Do not break previously defined functions when working on this exercise.
+*Note*: We do not specify how this sequence of moves should look like. Define a suitable data type yourself that fits here.
+
+*Important*: Do not break previously defined functions when working on this exercise.
