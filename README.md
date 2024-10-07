@@ -91,7 +91,7 @@ Given integer `n`, define the following functions using [`unfoldr`](https://hack
 
 **`generateLinearStates`**: This function should give all possible states with `n-1` positions filled with pegs and one empty position. E.g. `generateLinearStates 2` should give the elements `X .` and `. X`.
 
-**`generateStates`**: This function gives a list of all possible states up to size `n`. E.g. `generateLinearStates 2` should give the elements `.`, `X`, `. .`, `X .`, `. X` and `X X`.
+**`generateStates`**: This function gives a list of all possible states up to size `n`. E.g. `generateStates 2` should give the elements `.`, `X`, `. .`, `X .`, `. X` and `X X`.
 
 *Hint:* To define `generateStates` you might want to use some sort of tupling.
 
