@@ -15,7 +15,7 @@ module PegSolitaire
     isWinning,
     generateStates,
     generateLinearStates,
-    -- Zipper(..),
+    Zipper(..),
     fromZipper,
     toZipper,
     tryRight,
@@ -60,7 +60,8 @@ isWinning = error "Implement, document, and test this function"
 generateStates = error "Implement, document, and test this function"
 generateLinearStates = error "Implement, document, and test this function"
 
--- data Zipper a = 
+data Zipper a = ImplementThis
+  deriving (Show, Eq, Ord)
 
 fromZipper = error "Implement, document, and test this function"
 toZipper = error "Implement, document, and test this function"
