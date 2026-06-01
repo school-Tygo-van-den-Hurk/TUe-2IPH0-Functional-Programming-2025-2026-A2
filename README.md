@@ -91,7 +91,7 @@ For instance the list `[1,2,3,4,5]`, we can have `3` as focus. Then, `[4,5]` is 
 Define the data structure `Zipper a = ...`, which stores a list of type `[a]` as a zipper structure. Then, define helper functions `toZipper` and `fromZipper` that turn a non-empty list into a non-empty zipper structure and vice versa. Also, define functions `tryRight` and `tryLeft` that change the focus of a zipper one position to the right or left. The `tryRight` and `tryLeft` functions should return a `Maybe` type. If the zipper cannot go further right or left, it should return `Nothing`.
 
 #### Exercise 4: `generateLinearStates` and `generateStates` via `unfoldr`
-Given integer `n`, define the following functions using [`unfoldr`](https://hackage.haskell.org/package/base-4.17.2.1/docs/Data-List.html#v:unfoldr) (from `Data.List`).
+Given `n` of type `Int`, define the following functions using [`unfoldr`](https://hackage.haskell.org/package/base-4.17.2.1/docs/Data-List.html#v:unfoldr) (from `Data.List`).
 
 **`generateLinearStates`**: This function should give all possible states with `n-1` positions filled with pegs and one empty position. E.g. `generateLinearStates 2` should give the elements `X .` and `. X`.
 

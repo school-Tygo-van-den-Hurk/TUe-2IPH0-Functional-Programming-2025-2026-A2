@@ -1,3 +1,11 @@
+{-|
+Module      : PegSolitaire
+Description : 
+Copyright   : STUDENT NAME 1 (ID)
+              STUDENT NAME 2 (ID)
+
+
+-}
 import           Test.Hspec
 import           Test.Hspec.QuickCheck
 import           Test.QuickCheck
@@ -18,19 +26,11 @@ main = hspec $ do
     it "should have tests" $ do
           (1 :: Integer) `shouldBe` (1 :: Integer)
 
-  describe "fromZipper" $ do
+  describe "fromZipper and toZipper" $ do
     it "should have tests" $ do
           (1 :: Integer) `shouldBe` (1 :: Integer)
 
-  describe "toZipper" $ do
-    it "should have tests" $ do
-          (1 :: Integer) `shouldBe` (1 :: Integer)
-
-  describe "tryRight" $ do
-    it "should have tests" $ do
-          (1 :: Integer) `shouldBe` (1 :: Integer)
-
-  describe "tryLeft" $ do
+  describe "tryRight and tryLeft" $ do
     it "should have tests" $ do
           (1 :: Integer) `shouldBe` (1 :: Integer)
 
@@ -59,6 +59,10 @@ main = hspec $ do
           (1 :: Integer) `shouldBe` (1 :: Integer)
 
   describe "getSolution" $ do
+    it "should have tests" $ do
+          (1 :: Integer) `shouldBe` (1 :: Integer)
+
+  describe "trySolution" $ do
     it "should have tests" $ do
           (1 :: Integer) `shouldBe` (1 :: Integer)
 
