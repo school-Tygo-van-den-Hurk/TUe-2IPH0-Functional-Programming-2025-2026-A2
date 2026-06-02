@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this assignment, you will implement a solver for the one-dimensional peg solitaire puzzle using functional programming techniques, with a focus on the **zipper** data structure. The zipper allows efficient, constant-time access to a focused element within a data structure while maintaining the context around it.
+In this assignment, you will implement a solver for the one-dimensional peg solitaire puzzle using functional programming techniques, with a focus on the **zipper** data structure. The zipper allows efficient, constant-time access to a focused element within a data structure while maintaining the context around it. You will use catamorphisms (`foldT`), anamorphisms (`unfoldT`), and hylomorphisms (combining both) to solve this problem elegantly.
 
 ### The Puzzle
 
@@ -27,23 +27,9 @@ X . . . . . . . X
 has no solution since no moves are possible and two pegs remain.
 
 ## Assignment
-
-In this assignment, you will:
-1. Implement a **zipper data structure** for efficient list navigation
-2. Use **catamorphisms** and **anamorphisms** to analyze game states
-3. Build a **game tree** to explore all possible move sequences
-4. Determine if a puzzle has a winning solution using functional composition techniques
-
-You will use catamorphisms (`foldT`), anamorphisms (`unfoldT`), and hylomorphisms (combining both) to solve this problem elegantly.
-
-For all ten programming exercises, you have to explicitly add a type declaration and add documentation to every function you define. Additionally, you also have to write tests in
-test/Spec.hs.
-
-### Split over two weeks
 The assignment is split into two parts, mainly so you have clear goals for the first week and can check your progress using Momotor output.
 
 In the first week, you focus on exercises 1-4 and submit these for feedback from Momotor.
-
 
 In the second week, you finish the complete assignment. You submit your
 whole project.
@@ -69,7 +55,7 @@ Before submitting, ensure:
 - [Data.Tree documentation](https://hackage.haskell.org/package/containers-0.6.6/docs/Data-Tree.html) - for `Tree` type and utilities
 - [Data.List documentation](https://hackage.haskell.org/package/base-4.17.2.1/docs/Data-List.html) - especially `unfoldr` and `catMaybes`
 - [Data.Maybe documentation](https://hackage.haskell.org/package/base-4.17.2.1/docs/Data-Maybe.html)
-- [Hoogle](https://hoogle.haskell.org/)
+- [Hoogle (search for Haskell functions)](https://hoogle.haskell.org/)
 
 ## Exercises
 
@@ -130,6 +116,6 @@ Define function `getSolution` that gives back a sequence of moves that a player 
 Additionally, define function `trySolution`, that given the outcome of `getSolution` can try the moves and gives the game state after taking a sequence of moves. `trySolution` should return a `Maybe` type, where `Nothing` indicates that a move was not valid.
 
 *Notes*: We do not specify what this sequence of moves should look like. Define a suitable data type yourself that fits here. The input types of these functions should be regular lists, not zippers.
-Additionally, the following should be a validly typed expression: `(\ps -> trySolution ps =<< getSolution ps)`.
+Additionally, the following should be a validly typed expression: `(\ps -> trySolution ps (=<<) getSolution ps)`. (See [`=<<`](https://hoogle.haskell.org/?hoogle=%3D%3C%3C&scope=set%3Astackage).)
 
 *Important*: Do not break previously defined functions when working on this exercise.
