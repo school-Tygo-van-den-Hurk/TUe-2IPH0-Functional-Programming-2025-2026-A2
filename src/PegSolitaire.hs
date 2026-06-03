@@ -1,21 +1,17 @@
-{-|
-Module      : PegSolitaire
-Description : 
-Copyright   : STUDENT NAME 1 (ID)
-              STUDENT NAME 2 (ID)
-
-
--}
+-- |
+-- Module      : PegSolitaire
+-- Description :
+-- Copyright   : STUDENT NAME 1 (ID)
+--               STUDENT NAME 2 (ID)
 module PegSolitaire
-  (
-    Peg(..),
+  ( Peg (..),
     Pegs,
     stringToPegs,
     ----
     isWinning,
     generateStates,
     generateLinearStates,
-    Zipper(..),
+    Zipper (..),
     fromZipper,
     toZipper,
     tryRight,
@@ -24,7 +20,7 @@ module PegSolitaire
     makeMoves,
     foldT,
     unfoldT,
-    Tree(..),
+    Tree (..),
     makeGameTree,
     hasSolution,
     allSolutions,
@@ -32,6 +28,7 @@ module PegSolitaire
     trySolution,
   )
 where
+
 import Data.List (unfoldr)
 import Data.Maybe
 
@@ -45,7 +42,7 @@ instance Show Peg where
   show Empty = "."
   show Peg = "X"
 
-  showList xs = \s -> foldr (\ x-> (' ':) . shows x . (' ':)) s xs
+  showList xs = \s -> foldr (\x -> (' ' :) . shows x . (' ' :)) s xs
 
 stringToPegs :: String -> Pegs
 stringToPegs = map f
@@ -57,21 +54,34 @@ stringToPegs = map f
 ----------------------------------
 
 isWinning = error "Implement, document, and test this function"
+
 generateStates = error "Implement, document, and test this function"
+
 generateLinearStates = error "Implement, document, and test this function"
 
 data Zipper a = ImplementThis
   deriving (Show, Eq, Ord)
 
 fromZipper = error "Implement, document, and test this function"
+
 toZipper = error "Implement, document, and test this function"
+
 tryRight = error "Implement, document, and test this function"
+
 tryLeft = error "Implement, document, and test this function"
+
 makeMoves = error "Implement, document, and test this function"
+
 foldT = error "Implement, document, and test this function"
+
 unfoldT = error "Implement, document, and test this function"
+
 makeGameTree = error "Implement, document, and test this function"
+
 hasSolution = error "Implement, document, and test this function"
+
 allSolutions = error "Implement, document, and test this function"
+
 getSolution = error "Implement, document, and test this function"
+
 trySolution = error "Implement, document, and test this function"
