@@ -1,0 +1,32 @@
+name: Check Project
+# Checks wether or not the project builds and tests pass.
+
+on:
+  pull_request:
+    branches: [main, master, release, development]
+    types: [opened, synchronize, reopened]
+    paths: [ src/**, test/**, app/**, cabal.project.local, .ghci, PegSolitaire.cabal, .github/workflows/many--check-project.yaml]
+  push:
+    tags: [v*.*.*]
+    branches: [main, master, release, development]
+    paths: [ src/**, test/**, app/**, cabal.project.local, .ghci, PegSolitaire.cabal, .github/workflows/many--check-project.yaml]
+
+jobs:
+  build:
+    name: Test assignment criteria
+    environment: ${{ github.ref_type == 'tag' && 'production' || 'staging' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Set up GHC and cabal
+        uses: haskell-actions/setup@cd0d9bdd65b20557f41bea4dbe43d0b5fbbfe553 # v2.11.0
+        with:
+          ghc-version: "9.6.7"
+          cabal-version: "3.16.0.0"
+      - name: Update package index
+        run: cabal update
+      - name: Building project
+        run: cabal build
+      - name: Testing code quality
+        run: cabal test
