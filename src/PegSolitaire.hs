@@ -1,9 +1,9 @@
 {-# LANGUAGE InstanceSigs #-}
+
 -- |
 -- Module      : PegSolitaire
 -- Description :
 -- Copyright   : Tygo van den Hurk (1705709)
---               Kylian Maas (1712861)
 -- Date:       : 2026-06-02
 -- License     : None
 module PegSolitaire
@@ -33,12 +33,19 @@ module PegSolitaire
 where
 
 import Data.List (unfoldr)
-import Data.Maybe()
+import Data.Maybe
+  ( catMaybes,
+  )
 
 -- ~~~ Exercise 1 ~~~ --
 
 -- | Enum symbolizing a `Peg`. Any spot can be either `Empty` or `Peg` (filled).
-data Peg = Empty | Peg deriving (Eq, Ord)
+data Peg
+  = -- | An empty spot with no `Peg` in it.
+    Empty
+  | -- | An occupied spot with a `Peg` in it.
+    Peg
+  deriving (Eq, Ord)
 
 -- | A `List` of `Peg`s.
 type Pegs = [Peg]
@@ -48,7 +55,7 @@ instance Show Peg where
   show Peg = "X"
 
   showList :: [Peg] -> ShowS
-  showList xs = \s -> foldr (\x -> (' ' :) . shows x . (' ' :)) s xs
+  showList xs s = foldr (\x -> (' ' :) . shows x . (' ' :)) s xs
 
 -- | Converts a `String` of "X" and "." to `Pegs`.
 -- Errors on any character other then "X" or ".".
@@ -62,11 +69,11 @@ stringToPegs ::
   String ->
   -- | The constructed `Pegs`.
   Pegs
-stringToPegs = map f
+stringToPegs = map toPeg
   where
-    f '.' = Empty
-    f 'X' = Peg
-    f _ = error "Invalid peg string"
+    toPeg '.' = Empty
+    toPeg 'X' = Peg
+    toPeg _ = error "Invalid peg string"
 
 -- |
 -- Determines if for a given state the game has been won.
@@ -91,7 +98,18 @@ isWinning = (== 1) . length . filter (== Peg)
 
 -- | A `Tree` with an arbitrary of children which can be either `Node`s or `Leaf`s.
 -- `Leaf`s cannot have any children. But both `Node`s, as well as `Leaf`s hold data.
-data Tree a = Leaf a | Node a [Tree a] deriving (Show, Eq, Ord)
+data Tree a
+  = -- | The end of a tree. Any Vertex without any children.
+    Leaf
+      -- | The value in the `Leaf`.
+      a
+  | -- | Any Vertex without any children.
+    Node
+      -- | The value in the `Node`.
+      a
+      -- | The children of the `Node`.
+      [Tree a]
+  deriving (Show, Eq, Ord)
 
 -- | Folds a `Tree` recursively into a singular value.
 --
@@ -170,7 +188,7 @@ toZipper (x : xs) =
 -- >>> toZipper (Zipper {left = [], current = 1, right = []})
 -- [1]
 fromZipper :: Zipper a -> [a]
-fromZipper zipper = reverse $ left zipper ++ (current zipper : right zipper)
+fromZipper zipper = reverse (left zipper) ++ (current zipper : right zipper)
 
 -- | Tries to move right on the `Zipper`.
 --
@@ -236,44 +254,36 @@ tryLeft (Zipper (l : ls) c rs) =
 --
 -- === Examples
 --
--- >>> (map (map show) . generateStates) 0
+-- >>> map (concatMap show) $ generateStates 0
+-- []
 --
--- >>> (map (map show) . generateStates) 1
+-- >>> map (concatMap show) $ generateStates 1
+-- [".","X"]
 --
--- >>> (map (map show) . generateStates) 2
+-- >>> map (concatMap show) $ generateStates 2
+-- [".","X","..",".X","X.","XX"]
 generateStates ::
   -- | The size of the output `Pegs`.
   Integer ->
   -- | All possible permutations of `Pegs` of size n.
   [Pegs]
-generateStates n = unfoldr step (0, [])
+generateStates n | n <= 0 = []
+generateStates n = concat $ unfoldr step 1
   where
-    step (i, _) | i > 2 * n = Nothing
-    step (i, arr) = Just ([Empty], (i + 1, arr))
-
-    -- | Generates a `Tree` of depth n where all nodes hold a `Bool`.
-    genT :: Integer -> Integer -> [Tree Bool]
-    genT i t | i + 1 > t = error "This is not a cas we consider"
-    genT i t | i + 1 == t = [Leaf True, Leaf False]
-    genT i t = let subtree = genT (i + 1) t
-      in [ Node True subtree, Node False subtree ]
-
-    -- | Flattens the `Tree` into a `List` of `List`s of `Bool`s.
-    flattenT :: Tree Bool -> [[Bool]]
-    flattenT = foldT foldLeaf foldNode
-      where
-        foldLeaf value = [[value]]
-        foldNode (value, children) = concatMap (map (value :)) children
+    step i | i > n = Nothing
+    step i = Just (combos i, i + 1)
+    combos 0 = [[]]
+    combos k = [p : ps | p <- [Empty, Peg], ps <- combos (k - 1)]
 
 -- | Generates all states with exactly one Empty and the rest Peg of size n.
 --
 -- === Examples
 --
--- >>> (map (map show) . generateLinearStates) 3
--- [[".","X","X"],["X",".","X"],["X","X","."]]
+-- >>> map (concatMap show) $ generateLinearStates 3
+-- [".XX","X.X","XX."]
 --
--- >>> (map (map show) . generateLinearStates) 4
--- [[".","X","X","X"],["X",".","X","X"],["X","X",".","X"],["X","X","X","."]]
+-- >>> map (concatMap show) $ generateLinearStates 4
+-- [".XXX","X.XX","XX.X","XXX."]
 generateLinearStates ::
   -- | The size of `Pegs`
   Int ->
@@ -287,98 +297,60 @@ generateLinearStates n = unfoldr step 0
 
 -- ~~~ Exercise 5 ~~~ --
 
--- | A game state `Pegs` represented as a `Zipper` to analyze quicker.
-type State = Zipper Peg
-
--- | A list of game `State`s.
-type States = [State]
-
--- | The 2 directions of a 1D line.
-data Direction = 
-  -- | Left of something.
-  L | 
-  -- | Right of something.
-  R
-
 -- | Returns all possible legal `State`s the game can go in for a given `State`.
-makeMoves :: 
+--
+-- === Examples
+--
+-- >>> length $ makeMoves $ toZipper (stringToPegs "XX.")
+-- 1
+--
+-- >>> length $ makeMoves $ toZipper (stringToPegs "X.X")
+-- 0
+makeMoves ::
   -- | The `State` of the game to move from.
-  State ->
+  Zipper Peg ->
   -- | All possible legal `State`s from there.
-  States
-makeMoves zipper = unfoldr rec (R, Just zipper, Just zipper)
+  [Zipper Peg]
+makeMoves zipper = unfoldr step (positions zipper)
   where
-    -- | A recursion on a `State`.
-    rec :: (
-        -- | The `Direction` to move the `Peg` in.
-        Direction, 
-        -- | A `State` that might have reached the end of the list.
-        Maybe State,
-        -- | A `State` that might have reached the end of the list.
-        Maybe State
-      ) -> Maybe (State, (Direction, Maybe State, Maybe State))
-    
-    -- We cannot move in either direction: we've reached the ends.
-    rec (_, Nothing, Nothing) = Nothing
+    -- \| All zipper positions reachable by repeatedly moving right from the
+    -- leftmost position.
+    positions :: Zipper Peg -> [Zipper Peg]
+    positions z = goLeftmost z : unfoldr (\zz -> tryRight zz >>= \z' -> Just (z', z')) (goLeftmost z)
 
-    -- current pin is empty: we cannot move these
-    rec (_, Just l@Zipper { current = Empty }, r) = rec (R, tryLeft l, r)
-    rec (_, l, Just r@Zipper { current = Empty }) = rec (R, l, tryRight r)
-    
-    -- We want to move a pin, but there is not enough space. 
-    -- We first try looking left still, if we can't do either we move on.
-    rec (R, Just l@Zipper { right = [] }, r) = rec (L, Just l, r)
-    rec (R, Just l@Zipper { right = [_] }, r) = rec (L, Just l, r)
-    rec (R, l, Just r@Zipper { right = [] }) = rec (L, l, Just r)
-    rec (R, l, Just r@Zipper { right = [_] }) = rec (L, l, Just r)
-    rec (L, Just l@Zipper { left = [] }, r) = rec (R, tryLeft l, r)
-    rec (L, Just l@Zipper { left = [_] }, r) = rec (R, tryLeft l, r)
-    rec (L, l, Just r@Zipper { left = [] }) = rec (R, l, tryRight r)
-    rec (L, l, Just r@Zipper { left = [_] }) = rec (R, l, tryRight r)
+    goLeftmost :: Zipper Peg -> Zipper Peg
+    goLeftmost z = maybe z goLeftmost (tryLeft z)
 
-    -- Our next neighbor is a `Peg`, and the one next to that is `Empty` thus a valid move. 
-    -- Keep in mind the direction we're checking.
-    rec (R, Just l@Zipper { 
-      right = (Peg:Empty:rest)
-    }, r) = Just (Zipper { 
-      left = left l,
-      current = Empty,
-      right = Empty:Peg:rest
-    }, (L, Just l, r) )
+    -- \| For each position, try a jump to the right (peg, peg, empty -> empty, empty, peg)
+    -- and a jump to the left (empty, peg, peg -> peg, empty, empty), collecting valid results.
+    step :: [Zipper Peg] -> Maybe (Zipper Peg, [Zipper Peg])
+    step [] = Nothing
+    step (z : zs) =
+      case catMaybes [jumpRight z, jumpLeft z] of
+        (m : _) -> Just (m, zs)
+        [] -> step zs
 
-    rec (R, Just l@Zipper { 
-      left = (Peg:Empty:rest)
-    }, r) = Just (Zipper { 
-      left = Empty:Peg:rest,
-      current = Empty,
-      right = right l
-    }, (R, tryLeft l, r) )
+    -- \| Jump the current peg over its right neighbor into an empty spot two to the right.
+    jumpRight :: Zipper Peg -> Maybe (Zipper Peg)
+    jumpRight z@Zipper {current = Peg, right = (Peg : Empty : rs)} =
+      Just z {current = Empty, right = Empty : Peg : rs}
+    jumpRight _ = Nothing
 
-    rec (R, l, Just r@Zipper { 
-      right = (Peg:Empty:rest)
-    }) = Just (Zipper { 
-      left = left r,
-      current = Empty,
-      right = Empty:Peg:rest
-    }, (L, l, Just r) )
+    -- \| Jump the current peg over its left neighbor into an empty spot two to the left.
+    jumpLeft :: Zipper Peg -> Maybe (Zipper Peg)
+    jumpLeft z@Zipper {current = Peg, left = (Peg : Empty : ls)} =
+      Just z {current = Empty, left = Empty : Peg : ls}
+    jumpLeft _ = Nothing
 
-    rec (L, l, Just r@Zipper { 
-      left = (Peg:Empty:rest)
-    }) = Just (Zipper { 
-      left = Empty:Peg:rest,
-      current = Empty,
-      right = right r
-    }, (R, l, tryRight r) )
-
-    -- stop the warnings pls
-    -- rec _ = Nothing
+-- stop the warnings pls
+-- rec _ = Nothing
 
 -- error "Implement, document, and test this function"
 
 -- ~~~ Exercise 6 ~~~ --
 
 -- | Creates a `Tree` from a seed.
--- 
+--
 -- Must return `Either` a value, or a value and a `List` of seeds. Those will become `Leaf`s and
 -- `Node`s respectively.
 --
@@ -386,7 +358,6 @@ makeMoves zipper = unfoldr rec (R, Just zipper, Just zipper)
 --
 -- >>> unfoldT (\x -> if x <= 0 then Left 0 else Right (x, [x-1,x-2])) 3
 -- Node 3 [Node 2 [Node 1 [Leaf 0,Leaf 0],Leaf 0],Node 1 [Leaf 0,Leaf 0]]
--- 
 unfoldT ::
   -- | The function to create trees from
   (b -> Either a (a, [b])) ->
@@ -402,12 +373,80 @@ unfoldT generator seed = case generator seed of
 
 -- Exercise 7 --
 
-makeGameTree = error "Implement, document, and test this function"
+-- | Generates all possible moves from a state of `Pegs`, represented as a `Zipper`
+-- of `Peg`.
+--
+-- === Examples
+--
+-- >>> makeGameTree ".XX"
+--
+-- >>> map (concatMap show) $ allSolutions $ makeGameTree "XX.XX"
+makeGameTree ::
+  -- | The game to get all the states from.
+  Zipper Peg ->
+  -- | All possible legal game states you can reach from there.
+  Tree (Zipper Peg)
+makeGameTree = unfoldT toGameState
+  where
+    toGameState zipper = case makeMoves zipper of
+      [] -> Left zipper
+      list -> Right (zipper, list)
 
-hasSolution = error "Implement, document, and test this function"
+-- ~~~ Exercise 8 ~~~ --
 
-allSolutions = error "Implement, document, and test this function"
+-- | Given a `List` of `Pegs`, Sees if there is a order of moves you
+-- can perform to win the game. Returns `True` if there is at least one
+-- such set of moves to win the game.
+--
+-- === Examples
+hasSolution ::
+  -- | The game of `Pegs` to analyze.
+  Pegs ->
+  -- | Whether it has a solution.
+  Bool
+hasSolution game = foldT leafCase caseNode $ makeGameTree $ toZipper game
+  where
+    caseNode (vertex, subTrees) = leafCase vertex || or subTrees
+    leafCase = isWinning . fromZipper
 
-getSolution = error "Implement, document, and test this function"
+-- ~~~ Exercise 9 ~~~ --
+
+-- | Generates all solutions to a given game of `Pegs`.
+--
+-- === Examples
+--
+-- >>> map (concatMap show) $ allSolutions $ stringToPegs "X.X"
+-- []
+--
+-- >>> map (concatMap show) $ allSolutions $ stringToPegs ".XX"
+-- [".X."]
+--
+-- >>> map (concatMap show) $ allSolutions $ stringToPegs "XX.X."
+-- ["X....","...X."]
+allSolutions ::
+  -- | The game of `Pegs` to analyze.
+  Pegs ->
+  -- | All solutions to the given game from that point on.
+  [Pegs]
+allSolutions game = foldT leafCase caseNode $ makeGameTree $ toZipper game
+  where
+    -- We only need to check the `Leaf`s, as a winning game cannot make more moves.
+    leafCase zipper = [fromZipper zipper | isWinning $ fromZipper zipper]
+    caseNode (_, subTrees) = concat subTrees
+
+-- ~~~ Bonus Exercise ~~~ --
+
+-- | Given a game state, returns a list of `Pegs` representing the steps you must take
+-- to end up in a winning configuration. Returns `Nothing` if no such move exists.
+--
+-- === Examples
+getSolution ::
+  -- | The game state represented by `Pegs`.
+  Pegs ->
+  -- | The list of states you must follow to get to the winning condition. Returns
+  -- `Nothing` if no such move exists.
+  Maybe [Pegs]
+getSolution game | not $ hasSolution game = Nothing
+getSolution _ = error "Has solution, but this function is not implemented yet..."
 
 trySolution = error "Implement, document, and test this function"
