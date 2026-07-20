@@ -33,17 +33,17 @@ main = hspec $ do
 
     describe "foldT" $ do
       it "sumT" $ do
-        let sumT = foldT id (\(a, b) -> a + sum b)
-        sumT tree `shouldBe` (7 :: Integer)
+        let sumT = foldT id (\a b -> a + sum b)
+        sumT tree `shouldBe` (7 :: Int)
       it "elemT" $ do
-        let elemT a = foldT (== a) (\(b, c) -> (b == a) || or c)
+        let elemT a = foldT (== a) (\b c -> (b == a) || or c)
         (1 `elemT` tree) `shouldBe` True
         (2 `elemT` tree) `shouldBe` True
         (3 `elemT` tree) `shouldBe` False
         (4 `elemT` tree) `shouldBe` True
         (5 `elemT` tree) `shouldBe` False
       it "mapT" $ do
-        let mapT f = foldT (Leaf . f) (\(y, z) -> Node (f y) z)
+        let mapT f = foldT (Leaf . f) (Node . f)
         mapT (+ 1) tree `shouldBe` Node 5 [Leaf 2, Leaf 3]
         mapT even tree `shouldBe` Node True [Leaf False, Leaf True]
 
@@ -189,15 +189,15 @@ main = hspec $ do
   describe "unfoldT" $ do
     it "unfoldT builds the expected tree from seed 3" $ do
       let rec a = if a <= 0 then Left 0 else Right (a, [a - 1, a - 2])
-      unfoldT rec (3 :: Integer) `shouldBe` Node 3 [Node 2 [Node 1 [Leaf 0, Leaf 0], Leaf 0], Node 1 [Leaf 0, Leaf 0]]
+      unfoldT rec (3 :: Int) `shouldBe` Node 3 [Node 2 [Node 1 [Leaf 0, Leaf 0], Leaf 0], Node 1 [Leaf 0, Leaf 0]]
     it "unfoldT on a Left seed produces a single Leaf" $ do
       let rec a = if a <= 0 then Left a else Right (a, [a - 1])
-      unfoldT rec (0 :: Integer) `shouldBe` Leaf 0
+      unfoldT rec (0 :: Int) `shouldBe` Leaf 0
 
   -- ~~~ Exercise 7 ~~~ --
 
   describe "makeGameTree" $ do
-    let mapT f = foldT (Leaf . f) (\(y, z) -> Node (f y) z)
+    let mapT f = foldT (Leaf . f) (Node . f)
     let fromZipperT = mapT fromZipper
     it "Game Tree of 'X.X'" $ do
       let game = toZipper $ stringToPegs "X.X"
@@ -253,8 +253,8 @@ main = hspec $ do
 
   describe "getSolution" $ do
     it "should have tests" $ do
-      (1 :: Integer) `shouldBe` (1 :: Integer)
+      (1 :: Int) `shouldBe` (1 :: Int)
 
   describe "trySolution" $ do
     it "should have tests" $ do
-      (1 :: Integer) `shouldBe` (1 :: Integer)
+      (1 :: Int) `shouldBe` (1 :: Int)

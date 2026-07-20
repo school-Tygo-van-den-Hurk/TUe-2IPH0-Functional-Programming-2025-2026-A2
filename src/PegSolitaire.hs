@@ -125,14 +125,14 @@ foldT ::
   (a -> b) ->
   -- | The function to transform `Node`s in the tree where "a" is the `Node`s value
   -- and "[b]" are the transformed value of the children.
-  ((a, [b]) -> b) ->
+  (a -> [b] -> b) ->
   -- | The `Tree` to fold.
   Tree a ->
   -- | The final folded value of the `Tree`.
   b
 foldT transLeaf transNode tree = case tree of
   Leaf value -> transLeaf value
-  Node value leafs -> transNode (value, children leafs)
+  Node value leafs -> transNode value $ children leafs
   where
     children = map $ foldT transLeaf transNode
 
@@ -250,7 +250,7 @@ tryLeft (Zipper (l : ls) c rs) =
 
 -- ~~~ Exercise 4 ~~~ --
 
--- | Generates all combinations of `Pegs` of length of a given `Integer`.
+-- | Generates all combinations of `Pegs` of length of a given `Int`.
 --
 -- === Examples
 --
@@ -264,7 +264,7 @@ tryLeft (Zipper (l : ls) c rs) =
 -- [".","X","..",".X","X.","XX"]
 generateStates ::
   -- | The size of the output `Pegs`.
-  Integer ->
+  Int ->
   -- | All possible permutations of `Pegs` of size n.
   [Pegs]
 generateStates n | n <= 0 = []
@@ -406,7 +406,7 @@ hasSolution ::
   Bool
 hasSolution game = foldT leafCase caseNode $ makeGameTree $ toZipper game
   where
-    caseNode (vertex, subTrees) = leafCase vertex || or subTrees
+    caseNode vertex subTrees = leafCase vertex || or subTrees
     leafCase = isWinning . fromZipper
 
 -- ~~~ Exercise 9 ~~~ --
@@ -432,7 +432,7 @@ allSolutions game = foldT leafCase caseNode $ makeGameTree $ toZipper game
   where
     -- We only need to check the `Leaf`s, as a winning game cannot make more moves.
     leafCase zipper = [fromZipper zipper | isWinning $ fromZipper zipper]
-    caseNode (_, subTrees) = concat subTrees
+    caseNode _ = concat
 
 -- ~~~ Bonus Exercise ~~~ --
 
@@ -440,13 +440,6 @@ allSolutions game = foldT leafCase caseNode $ makeGameTree $ toZipper game
 -- to end up in a winning configuration. Returns `Nothing` if no such move exists.
 --
 -- === Examples
-getSolution ::
-  -- | The game state represented by `Pegs`.
-  Pegs ->
-  -- | The list of states you must follow to get to the winning condition. Returns
-  -- `Nothing` if no such move exists.
-  Maybe [Pegs]
-getSolution game | not $ hasSolution game = Nothing
-getSolution _ = error "Has solution, but this function is not implemented yet..."
+getSolution = error "Implement, document, and test this function"
 
 trySolution = error "Implement, document, and test this function"
